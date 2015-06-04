@@ -49,22 +49,22 @@
         <div class="container">
             <div class="col-md-6 col-md-offset-3">
                 <h1>Discover <span class="color-green">Your</span> Musics</h1>
-
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search desired words ...">
-                    <span class="input-group-btn">
-                        <button class="btn-u btn-u-lg" type="button"><i class="fa fa-search"></i></button>
-                    </span>
-                </div>
-
-                <form action="" class="sky-form page-search-form">
+                <form class="search-form" action="http://localhost:8080/musics/search/">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search desired words ...">
+                        <span class="input-group-btn">
+                            <button class="btn-u btn-u-lg" type="submit"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                </form>
+<!--                 <form action="" class="sky-form page-search-form">
                     <div class="inline-group">                    
                         <label class="checkbox"><input type="checkbox" name="checkbox-inline" checked><i></i>Recent</label>
                         <label class="checkbox"><input type="checkbox" name="checkbox-inline"><i></i>Related</label>
                         <label class="checkbox"><input type="checkbox" name="checkbox-inline"><i></i>Popular</label>
                         <label class="checkbox"><input type="checkbox" name="checkbox-inline"><i></i>Most Common</label>
                     </div>
-                </form>    
+                </form>     -->
             </div>
         </div>    
     </div><!--/container-->     
@@ -74,14 +74,14 @@
 		<div class="container recommend" style="margin-top:0px;">
 			<div class="headline"><h2>Hot Music Recommended</h2></div>  
 			<!-- Most Recommended Music -->
-			<div class="music-widget" data-id="-1254592171">
+			<div class="music-widget recommend-music" data-id="-1254592171">
 				<div class="music-meta">
 					<h4 class="music-title">It's Dark, It's Cold, It's Winter</h4>
 					<p class="music-artist">Sleepmakeswaves</p>
 				</div>
 
 				<audio class="audio-bullet" preload="true">
-			  	<source src="audiobullet/example/Sleepmakeswaves - It's Dark, It's Cold, It's Winter.mp3">
+			  	  <source src="audiobullet/example/Sleepmakeswaves - It's Dark, It's Cold, It's Winter.mp3">
 					<!-- <source src="http://www.alexkatz.me/codepen/music/interlude.ogg"> -->
 				</audio>
 				<form class="bullet-form" style="display:none">
@@ -95,21 +95,18 @@
 					<!-- <div class="bullet-panel"></div> -->
 				</form>
 			</div>
+            
+            <div class="music-append"></div>
+
 
 		</div>
+
+
+
 
 		
     <!--=== Content ===-->
     <div class="container content">
-
-
-
-
-
-
-
-
-
         <!-- Top Categories -->
         <div class="headline"><h2>Top Categories</h2></div>  
         <div class="row category margin-bottom-20">
@@ -503,6 +500,31 @@
     </div>     
     <!--=== End Footer Version 1 ===-->
 </div><!--/End Wrapepr-->
+
+
+<!--=== Clone Widget ===-->
+    
+<div class="music-widget clone-music hidden" data-id="">
+    <div class="music-meta">
+        <h4 class="music-title"></h4>
+        <p class="music-artist"></p>
+    </div>
+
+    <audio class="audio-bullet" preload="true">
+      <source src="">
+    </audio>
+    <form class="bullet-form" style="display:none">
+        <div class="input-group">
+            <div class="input-group-btn">
+            <button type="button" class="btn btn-default bullet-add-btn">Add</button>
+            </div><!-- /btn-group -->
+            <input type="text" class="bullet-input form-control" placeholder="say something..."/>
+        </div>  
+    </form>
+</div>
+
+
+
 
 <!-- JS Global Compulsory -->           
 <script type="text/javascript" src="assets/plugins/jquery/jquery.min.js"></script>

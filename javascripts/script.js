@@ -2,14 +2,16 @@ var domain = 'http://localhost:8080/musics/';
 
 $(function(){
 
+	// $('.audio-bullet').audiobullet();
+	$('.recommend-music .audio-bullet').audiobullet();
+
 	activateAudioBullet();
 
+	activateSearch();
 })
 
 function activateAudioBullet() {
-
 	var showPopover = function($root, obj) {
-
 		var $anchor = $root.find('.bullet-anchor[anchor-timestamp="'+obj.currentTime+'"]');
 		var offset = $anchor.css('left');
 		$root.find('.bullet-popover').css('left', offset);
@@ -20,37 +22,27 @@ function activateAudioBullet() {
 		},250)
 
 		$root.find('.bullet-popover').text($anchor.data('bullet').text);
-
 	}
 
 	var hidePopover = function($root) {
 		$root.find('.bullet-popover').addClass('bullet-popover-hide');
 	}
 
-
-	$('.audio-bullet').one('audio:play',function(){
+	$('.audio-bullet').one('audio:play', function(){
 		$(this).closest('.music-widget').find('.bullet-form').slideDown();
-
 	})
 
-
-	$('.audio-bullet').on('audio:timeUpdate', function(e, obj) {
-
+	$('body').on('audio:timeUpdate', '.audio-bullet', function(e, obj) {
 		// console.log(obj.currentTime);
 		showPopover($(this).closest('.music-widget'), obj);
-
-
 	})
 
-	$('.audio-bullet').on('bulletAdded', function(e, obj, board){
-
+	$('body').on('bulletAdded','.audio-bullet', function(e, obj, board){
 		// $('pre').text(arr);
 		console.log(board);
-		
 	})
 
-	$('.audio-bullet').on('hasBullet', function(e, arr){
-
+	$('body').on('hasBullet', '.audio-bullet', function(e, arr){
 		// var $panel = $('.bullet-panel');
 		// $panel.empty();
 
@@ -60,17 +52,15 @@ function activateAudioBullet() {
 		// 	$bullet.text(this.uname + ": " + this.text);
 		// 	$panel.append($bullet);
 		// })
-		
-
 	})
 
-	$('.audio-bullet').on('audio:change', function() {
+	$('body').on('audio:change','.audio-bullet', function() {
 		// var $panel = $(this).closest(".music-widget").find('.bullet-panel');
 		// $panel.empty();
 		hidePopover($(this).closest('.music-widget'));
 	})
 
-	$('.bullet-form').on('submit', function(){
+	$('body').on('submit','.bullet-form', function(){
 		var uname = 'me';
 		var obj = {};
 		obj.uname = uname;
@@ -82,7 +72,7 @@ function activateAudioBullet() {
 	})	
 
 	//preload comment
-	$('.audio-bullet').on('buildSuccess', function(){
+	$('body').on('buildSuccess', '.recommend-music .audio-bullet', function(){
 		var url = domain;
 		var $audio = $(this);
 		var id = $audio.closest('.music-widget').attr('data-id');
@@ -100,22 +90,17 @@ function activateAudioBullet() {
 				$audio.audiobullet('add', comment);
 			})
 		})
-
-
 	})
 
 
 	//save comment
-	$('.audio-bullet').on('beforeBulletAdded', function(e, obj){
-
-
+	$('body').on('beforeBulletAdded','.audio-bullet', function(e, obj){
 		var url = domain;
 		var data = {};
 		// data.id = 1;
 		data.timeStamp = obj.rawTime;
 		data.user = null;
 		data.content = obj.text;
-
 		var musicId = $(this).closest('.music-widget').attr("data-id");
 		url += musicId + "/addComment/";
 		$.ajax({
@@ -128,7 +113,6 @@ function activateAudioBullet() {
 			success: function(d) {
 				console.log(d);
 			},
-
 			error: function() {
 				console.dir(arguments);
 			}
@@ -156,6 +140,80 @@ function activateAudioBullet() {
 	// 	$(this).empty();
 	// })
 
+}
+
+
+
+function activateSearch() {
+
+
+	$('.search-form').on('submit', function(){
+		var keyword = $(this).find('input').val();
+		var url = $(this).attr('action') + keyword;
+
+		$.get(url, function(data){
+
+			var $musics = [];
+			console.log(data);
+			data.forEach(function(obj){
+				$musics.push(buildMusic(obj));
+			})
+			// console.log($musics);
+			$('.recommend .music-widget').fadeOut(500, function(){
+				$(this).remove();
+				$musics.forEach(function($music){
+					$('.recommend .music-append').append($music);
+				})
+			})
+
+
+		})
+
+
+		return false;
+	})
+}
+
+function buildMusic(obj) {
+
+
+	var $clone = $('.clone-music').clone().removeClass('clone-music hidden');
+
+	$clone.find('.music-title').text(obj.title);
+	$clone.find('.music-artist').text(obj.artist);
+	$clone.attr('data-id', obj.id);
+	$clone.find('audio source').attr('src', obj.sourceURL);
+
+	$clone.css('padding-bottom', '40px');
+	$clone.css('margin-bottom', '30px');
+	$clone.css('border-bottom', '1px solid #e4e9f0')
+	$clone.find('.audio-bullet').audiobullet();
+
+
+	//preload comment
+	$clone.find('.audio-bullet').on('buildSuccess', function(){
+		var $audio = $(this);
+		// console.log(data);
+		var comments = obj.bulletComments;
+		console.log(obj);
+		if (comments == null) return;
+
+		comments.forEach(function(comment){
+			comment.preload = true;
+			comment.text = comment.content;
+			comment.timestamp = comment.timeStamp;
+			delete comment.timeStamp;
+			delete comment.content;
+			$audio.audiobullet('add', comment);
+		})
+	})
+
+
+	$clone.find('.audio-bullet').one('audio:play', function(){
+		$(this).closest('.music-widget').find('.bullet-form').slideDown();
+	})
+
+	return $clone;
 }
 
 

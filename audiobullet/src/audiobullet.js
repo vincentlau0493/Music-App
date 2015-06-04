@@ -461,7 +461,7 @@
 	}
 
 
-	$('.audio-bullet').audiobullet();
+	// $('.audio-bullet').audiobullet();
 
 })(window.jQuery);
 

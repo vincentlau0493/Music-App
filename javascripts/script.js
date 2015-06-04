@@ -1,3 +1,5 @@
+var domain = 'http://localhost:8080/musics/';
+
 $(function(){
 
 	activateAudioBullet();
@@ -79,17 +81,41 @@ function activateAudioBullet() {
 		return false;
 	})	
 
+	//preload comment
+	$('.audio-bullet').on('buildSuccess', function(){
+		var url = domain;
+		var $audio = $(this);
+		var id = $audio.closest('.music-widget').attr('data-id');
+		$.get(url+id, function(data){
+
+			// console.log(data);
+			var comments = data.bulletComments;
+			
+			comments.forEach(function(comment){
+				comment.preload = true;
+				comment.text = comment.content;
+				comment.timestamp = comment.timeStamp;
+				delete comment.timeStamp;
+				delete comment.content;
+				$audio.audiobullet('add', comment);
+			})
+		})
+
+
+	})
+
+
+	//save comment
 	$('.audio-bullet').on('beforeBulletAdded', function(e, obj){
 
-		var url = 'http://localhost:8080/musics/';
 
+		var url = domain;
 		var data = {};
 		// data.id = 1;
 		data.timeStamp = obj.rawTime;
 		data.user = null;
 		data.content = obj.text;
 
-		console.log(JSON.stringify(data));
 		var musicId = $(this).closest('.music-widget').attr("data-id");
 		url += musicId + "/addComment/";
 		$.ajax({
@@ -106,36 +132,40 @@ function activateAudioBullet() {
 			error: function() {
 				console.dir(arguments);
 			}
-
-
-
 		})
 
 	})
 
+	// $('body').on('mouseenter','.bullet-anchor', function(){
+	// 	var $bullet = $('<span></span>');
+	// 	// $bullet.css("position", "absolute").css("left", "")
+	// 	$bullet.css({
+	// 		position: "absolute",
+	// 		left: "3px",
+	// 		bottom: 0,
+	// 	})
+	// 	$bullet.text($(this).attr('anchor-bullet'));
+	// 	var _this = this;
+	// 	setTimeout(function(){
+	// 		$(_this).append($bullet);
+	// 	},100)
 
+	// })
 
-	$('body').on('mouseenter','.bullet-anchor', function(){
-		var $bullet = $('<span></span>');
-		// $bullet.css("position", "absolute").css("left", "")
-		$bullet.css({
-			position: "absolute",
-			left: "3px",
-			bottom: 0,
-		})
-		$bullet.text($(this).attr('anchor-bullet'));
-		var _this = this;
-		setTimeout(function(){
-			$(_this).append($bullet);
-		},100)
-
-	})
-
-	$('body').on('mouseout','.bullet-anchor', function(){
-		$(this).empty();
-	})
+	// $('body').on('mouseout','.bullet-anchor', function(){
+	// 	$(this).empty();
+	// })
 
 }
+
+
+
+
+
+
+
+
+
 
 
 
